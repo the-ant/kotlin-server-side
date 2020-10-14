@@ -25,4 +25,6 @@ fun Route.todos(
     postTodoCreate(userRepository, todoRepository)
 
     putTodoUpdate(userRepository, todoRepository)
+
+    getTodos(userRepository, todoRepository)
 }
