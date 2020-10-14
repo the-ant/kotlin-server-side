@@ -2,16 +2,17 @@ package com.theant
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.theant.factory.DataFactory
+import com.theant.repository.todo.TodoRepositoryImpl
 import com.theant.repository.user.UserRepositoryImpl
+import com.theant.route.todo.todos
 import com.theant.route.user.users
 import com.theant.service.JwtService
-import com.theant.service.auth.MySession
+import com.theant.service.MySession
 import com.theant.service.auth.hash
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.features.*
-import io.ktor.http.*
 import io.ktor.jackson.*
 import io.ktor.locations.*
 import io.ktor.response.*
@@ -36,9 +37,10 @@ fun Application.module(testing: Boolean = false) {
     }
 
     DataFactory.initial()
-    val userRepository = UserRepositoryImpl()
     val jwtService = JwtService()
     val hashFunction = { s: String -> hash(s) }
+    val userRepository = UserRepositoryImpl()
+    val todoRepository = TodoRepositoryImpl()
 
     install(Authentication) {
         jwt("jwt") {
@@ -62,6 +64,8 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
         users(userRepository, jwtService, hashFunction)
+
+        todos(userRepository, todoRepository)
 
         get("/") {
             call.respond("Hello!")

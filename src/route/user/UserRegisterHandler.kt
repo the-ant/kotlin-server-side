@@ -1,6 +1,5 @@
 package com.theant.route.user
 
-import com.theant.API_VERSION
 import com.theant.error.ApiError
 import com.theant.error.ErrorCode
 import com.theant.error.auth.UserAlreadyExistsException
@@ -9,7 +8,7 @@ import com.theant.response.BaseDataResponse
 import com.theant.response.auth.SignupResponse
 import com.theant.response.auth.toUserResponse
 import com.theant.service.JwtService
-import com.theant.service.auth.MySession
+import com.theant.service.MySession
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.locations.*
@@ -18,34 +17,14 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.*
 
-const val USERS = "$API_VERSION/users"
-const val USER_LOGIN = "$USERS/login"
-const val USERS_CREATE = "$USERS/create"
 
 @KtorExperimentalLocationsAPI
-@Location(USER_LOGIN)
-class UserLoginRoute
-
-@KtorExperimentalLocationsAPI
-@Location(USERS_CREATE)
-class UserCreateRoute
-
-@KtorExperimentalLocationsAPI
-fun Route.users(
+fun Route.postUserRegister(
     userRepository: UserRepository,
     jwtService: JwtService,
     hasFunction: (String) -> String
 ) {
-    createUser(userRepository, jwtService, hasFunction)
-}
-
-@KtorExperimentalLocationsAPI
-fun Route.createUser(
-    userRepository: UserRepository,
-    jwtService: JwtService,
-    hasFunction: (String) -> String
-) {
-    post<UserCreateRoute> {
+    post<UserRegisterRoute> {
         val signupParams = call.receive<Parameters>()
         val userName = signupParams["userName"]
         val password = signupParams["password"]
@@ -71,10 +50,10 @@ fun Route.createUser(
                 call.apply {
                     sessions.set(MySession(user.id))
                     val response = BaseDataResponse(
-                        HttpStatusCode.Created,
+                        HttpStatusCode.OK,
                         SignupResponse(jwtService.generateToken(user), user.toUserResponse())
                     )
-                    respond(HttpStatusCode.Created, response)
+                    respond(HttpStatusCode.OK, response)
                 }
             }
         } catch (e: Exception) {
