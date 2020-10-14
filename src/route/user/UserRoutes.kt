@@ -19,6 +19,10 @@ class UserLoginRoute
 class UserRegisterRoute
 
 @KtorExperimentalLocationsAPI
+@Location(USERS)
+class UserInfoRoute
+
+@KtorExperimentalLocationsAPI
 fun Route.users(
     userRepository: UserRepository,
     jwtService: JwtService,
@@ -26,4 +30,7 @@ fun Route.users(
 ) {
     postUserRegister(userRepository, jwtService, hasFunction)
 
+    postUserLogin(userRepository, jwtService, hasFunction)
+
+    getUserInfo(userRepository)
 }

@@ -1,10 +1,10 @@
-package com.theant.route.todo
+package com.theant.route.user
 
 import com.theant.error.ApiError
 import com.theant.error.ErrorCode
-import com.theant.repository.todo.TodoRepository
 import com.theant.repository.user.UserRepository
 import com.theant.response.BaseDataResponse
+import com.theant.response.auth.toUserInfoResponse
 import com.theant.service.MySession
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -14,13 +14,11 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.*
 
+
 @KtorExperimentalLocationsAPI
-fun Route.getTodos(
-    userRepository: UserRepository,
-    todoRepository: TodoRepository
-) {
+fun Route.getUserInfo(userRepository: UserRepository) {
     authenticate("jwt") {
-        get<TodoRoute> {
+        get<UserInfoRoute> {
             val user = call.sessions.get<MySession>()?.let { userRepository.findUser(it.userId) }
             if (user == null) {
                 val message = ApiError(
@@ -32,11 +30,10 @@ fun Route.getTodos(
             }
 
             try {
-                val todos = todoRepository.getTodos(user.id)
-                call.respond(HttpStatusCode.OK, BaseDataResponse(HttpStatusCode.OK, todos))
+                call.respond(HttpStatusCode.OK, BaseDataResponse(HttpStatusCode.OK, user.toUserInfoResponse()))
             } catch (e: Exception) {
-                application.log.error("Failed to get Todos", e)
-                call.respond(HttpStatusCode.BadRequest, "Problems getting Todos")
+                application.log.error("Failed to get user info", e)
+                call.respond(HttpStatusCode.BadRequest, "Problems getting User Info!")
             }
         }
     }

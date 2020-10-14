@@ -8,8 +8,10 @@ object ErrorCode {
     const val MISSING_PASSWORD = 1003
     const val MISSING_DISPLAY_NAME = 1004
     const val USER_TOKEN_EXPIRED = 1005
+    const val USER_WRONG_PASSWORD = 1006
+    const val USER_NOT_EXIST = 1007
 
     // Todos
     const val MISSING_TODO = 2001
-    const val TODO_NOT_EXIST = 2001
+    const val TODO_NOT_EXIST = 2002
 }

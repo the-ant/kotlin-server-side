@@ -28,8 +28,8 @@ fun Route.putTodoUpdate(
             if (user == null) {
                 val message = ApiError(
                     HttpStatusCode.Unauthorized,
-                    "Your session has expired!",
-                    listOf(ApiError.Error(ErrorCode.USER_TOKEN_EXPIRED, "Your token has expired!"))
+                    "User cannot found!",
+                    listOf(ApiError.Error(ErrorCode.USER_NOT_EXIST, "User not exist!"))
                 )
                 return@put call.respond(HttpStatusCode.Unauthorized, message)
             }
@@ -48,7 +48,7 @@ fun Route.putTodoUpdate(
                 return@put call.respond(HttpStatusCode.BadRequest, message)
             }
 
-            val todo = todoRepository.finTodo(todoId.toInt())
+            val todo = todoRepository.findTodo(todoId.toInt())
             if (todo == null) {
                 val message = ApiError(
                     HttpStatusCode.BadRequest,

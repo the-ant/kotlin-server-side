@@ -27,8 +27,8 @@ fun Route.postTodoCreate(
             if (user == null) {
                 val message = ApiError(
                     HttpStatusCode.Unauthorized,
-                    "Your session has expired!",
-                    listOf(ApiError.Error(ErrorCode.USER_TOKEN_EXPIRED, "Your token has expired!"))
+                    "User cannot found!",
+                    listOf(ApiError.Error(ErrorCode.USER_NOT_EXIST, "User not exist!"))
                 )
                 return@post call.respond(HttpStatusCode.Unauthorized, message)
             }

@@ -32,7 +32,7 @@ class TodoRepositoryImpl : TodoRepository {
             .mapNotNull { it.toTodo() }
     }
 
-    override suspend fun finTodo(todoId: Int): Todo? = dbQuery {
+    override suspend fun findTodo(todoId: Int): Todo? = dbQuery {
         Todos.select { Todos.id.eq(todoId) }
             .mapNotNull { it.toTodo() }
             .singleOrNull()

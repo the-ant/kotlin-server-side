@@ -8,7 +8,7 @@ interface TodoRepository {
 
     suspend fun getTodos(userId: Int): List<Todo>
 
-    suspend fun finTodo(todoId: Int): Todo?
+    suspend fun findTodo(todoId: Int): Todo?
 
     suspend fun updateTodo(todoId: Int, todo: String, done: Boolean)
 
