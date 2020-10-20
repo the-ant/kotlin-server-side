@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.theant.factory.DataFactory
 import com.theant.repository.todo.TodoRepositoryImpl
 import com.theant.repository.user.UserRepositoryImpl
+import com.theant.response.auth.SignupResponse
 import com.theant.route.todo.todos
 import com.theant.route.user.users
 import com.theant.service.JwtService
@@ -13,6 +14,7 @@ import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.features.*
+import io.ktor.http.*
 import io.ktor.jackson.*
 import io.ktor.locations.*
 import io.ktor.response.*
@@ -68,7 +70,7 @@ fun Application.module(testing: Boolean = false) {
         todos(userRepository, todoRepository)
 
         get("/") {
-            call.respond("Hello!")
+            call.respond(HttpStatusCode.OK, SignupResponse.UserResponse(1, "Jack", "Jack Sparrow"))
         }
     }
 }
