@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.theant.factory.DataFactory
 import com.theant.repository.todo.TodoRepositoryImpl
 import com.theant.repository.user.UserRepositoryImpl
+import com.theant.repository.video.VideoRepositoryImpl
 import com.theant.response.auth.SignupResponse
 import com.theant.route.todo.todos
 import com.theant.route.user.users
+import com.theant.route.video.videos
 import com.theant.service.JwtService
 import com.theant.service.MySession
 import com.theant.service.auth.hash
@@ -43,6 +45,7 @@ fun Application.module(testing: Boolean = false) {
     val hashFunction = { s: String -> hash(s) }
     val userRepository = UserRepositoryImpl()
     val todoRepository = TodoRepositoryImpl()
+    val videoRepository = VideoRepositoryImpl()
 
     install(Authentication) {
         jwt("jwt") {
@@ -59,7 +62,6 @@ fun Application.module(testing: Boolean = false) {
 
     install(ContentNegotiation) {
         jackson {
-            // extension method of ObjectMapper to allow config etc
             enable(SerializationFeature.INDENT_OUTPUT)
         }
     }
@@ -67,10 +69,12 @@ fun Application.module(testing: Boolean = false) {
     routing {
         users(userRepository, jwtService, hashFunction)
 
-        todos(userRepository, todoRepository)
+        todos(jwtService, userRepository, todoRepository)
+
+        videos(videoRepository)
 
         get("/") {
-            call.respond(HttpStatusCode.OK, SignupResponse.UserResponse(1, "Jack", "Jack Sparrow"))
+            call.respondText { "Hello World!!!!!!!!!!" }
         }
     }
 }

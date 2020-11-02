@@ -3,6 +3,7 @@ package com.theant.route.todo
 import com.theant.API_VERSION
 import com.theant.repository.todo.TodoRepository
 import com.theant.repository.user.UserRepository
+import com.theant.service.JwtService
 import io.ktor.locations.*
 import io.ktor.routing.*
 
@@ -19,12 +20,13 @@ data class TodoUpdateRoute(val id: Int)
 
 @KtorExperimentalLocationsAPI
 fun Route.todos(
-    userRepository: UserRepository,
-    todoRepository: TodoRepository
+        jwtService: JwtService,
+        userRepository: UserRepository,
+        todoRepository: TodoRepository
 ) {
-    postTodoCreate(userRepository, todoRepository)
+    postTodoCreate(jwtService, userRepository, todoRepository)
 
-    putTodoUpdate(userRepository, todoRepository)
+    putTodoUpdate(jwtService, userRepository, todoRepository)
 
-    getTodos(userRepository, todoRepository)
+    getTodos(jwtService, userRepository, todoRepository)
 }

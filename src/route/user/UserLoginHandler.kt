@@ -46,6 +46,7 @@ fun Route.postUserLogin(
             userRepository.findUserByUserName(userName)?.let { user ->
                 if (hashedPassword == user.passwordHash) {
                     call.apply {
+                        application.log.info("Login - userId = ${user.id}")
                         sessions.set(MySession(user.id))
                         val response = BaseDataResponse(
                             HttpStatusCode.OK,

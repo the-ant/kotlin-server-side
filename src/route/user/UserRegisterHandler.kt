@@ -36,8 +36,8 @@ fun Route.postUserRegister(
                 errors.add(ApiError.Error(ErrorCode.MISSING_USERNAME, "Missing User Name Field!"))
             if (password.isNullOrBlank())
                 errors.add(ApiError.Error(ErrorCode.MISSING_PASSWORD, "Missing Password Field!"))
-            if (displayName.isNullOrBlank())
-                errors.add(ApiError.Error(ErrorCode.MISSING_DISPLAY_NAME, "Missing Display Name Field!"))
+//            if (displayName.isNullOrBlank())
+//                errors.add(ApiError.Error(ErrorCode.MISSING_DISPLAY_NAME, "Missing Display Name Field!"))
 
             val message = ApiError(HttpStatusCode.BadRequest, "Missing Fields!", errors)
             return@post call.respond(HttpStatusCode.BadRequest, message)
@@ -48,10 +48,9 @@ fun Route.postUserRegister(
         try {
             userRepository.addUser(userName, displayName, hashedPassword)?.let { user ->
                 call.apply {
-                    sessions.set(MySession(user.id))
                     val response = BaseDataResponse(
                         HttpStatusCode.OK,
-                        SignupResponse(jwtService.generateToken(user), user.toUserResponse())
+                        "Succeeded!"
                     )
                     respond(HttpStatusCode.OK, response)
                 }

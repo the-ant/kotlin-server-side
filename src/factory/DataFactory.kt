@@ -2,6 +2,7 @@ package com.theant.factory
 
 import com.theant.table.Todos
 import com.theant.table.Users
+import com.theant.table.Videos
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ object DataFactory {
         transaction {
             SchemaUtils.create(Users)
             SchemaUtils.create(Todos)
+            SchemaUtils.create(Videos)
         }
     }
 

@@ -5,6 +5,9 @@ import com.theant.error.ErrorCode
 import com.theant.repository.todo.TodoRepository
 import com.theant.repository.user.UserRepository
 import com.theant.response.BaseDataResponse
+import com.theant.route.user.getUserFromSessionsOrDb
+import com.theant.route.user.userNotExist
+import com.theant.service.JwtService
 import com.theant.service.MySession
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -18,20 +21,13 @@ import io.ktor.sessions.*
 
 @KtorExperimentalLocationsAPI
 fun Route.postTodoCreate(
-    userRepository: UserRepository,
-    todoRepository: TodoRepository
+        jwtService: JwtService,
+        userRepository: UserRepository,
+        todoRepository: TodoRepository
 ) {
     authenticate("jwt") {
         post<TodoRoute> {
-            val user = call.sessions.get<MySession>()?.let { userRepository.findUser(it.userId) }
-            if (user == null) {
-                val message = ApiError(
-                    HttpStatusCode.Unauthorized,
-                    "User cannot found!",
-                    listOf(ApiError.Error(ErrorCode.USER_NOT_EXIST, "User not exist!"))
-                )
-                return@post call.respond(HttpStatusCode.Unauthorized, message)
-            }
+            val user = call.getUserFromSessionsOrDb(jwtService, userRepository) ?: return@post call.userNotExist()
 
             val params = call.receive<Parameters>()
             val todo = params["todo"]
@@ -39,9 +35,9 @@ fun Route.postTodoCreate(
 
             if (todo.isNullOrBlank()) {
                 val message = ApiError(
-                    HttpStatusCode.BadRequest,
-                    "Missing Fields!",
-                    listOf(ApiError.Error(ErrorCode.MISSING_TODO, "Missing TODO title Field!"))
+                        HttpStatusCode.BadRequest,
+                        "Missing Fields!",
+                        listOf(ApiError.Error(ErrorCode.MISSING_TODO, "Missing TODO title Field!"))
                 )
                 return@post call.respond(HttpStatusCode.BadRequest, message)
             }

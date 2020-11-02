@@ -6,6 +6,9 @@ import com.theant.model.Todo
 import com.theant.repository.todo.TodoRepository
 import com.theant.repository.user.UserRepository
 import com.theant.response.BaseDataResponse
+import com.theant.route.user.getUserFromSessionsOrDb
+import com.theant.route.user.userNotExist
+import com.theant.service.JwtService
 import com.theant.service.MySession
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -19,20 +22,13 @@ import io.ktor.sessions.*
 
 @KtorExperimentalLocationsAPI
 fun Route.putTodoUpdate(
-    userRepository: UserRepository,
-    todoRepository: TodoRepository
+        jwtService: JwtService,
+        userRepository: UserRepository,
+        todoRepository: TodoRepository
 ) {
     authenticate("jwt") {
         put<TodoUpdateRoute> {
-            val user = call.sessions.get<MySession>()?.let { userRepository.findUser(it.userId) }
-            if (user == null) {
-                val message = ApiError(
-                    HttpStatusCode.Unauthorized,
-                    "User cannot found!",
-                    listOf(ApiError.Error(ErrorCode.USER_NOT_EXIST, "User not exist!"))
-                )
-                return@put call.respond(HttpStatusCode.Unauthorized, message)
-            }
+            val user = call.getUserFromSessionsOrDb(jwtService, userRepository) ?: return@put call.userNotExist()
 
             val todoId = call.parameters["id"]
             val params = call.receive<Parameters>()
@@ -41,9 +37,9 @@ fun Route.putTodoUpdate(
 
             if (todoId.isNullOrBlank()) {
                 val message = ApiError(
-                    HttpStatusCode.BadRequest,
-                    "Missing Fields!",
-                    listOf(ApiError.Error(ErrorCode.MISSING_TODO, "You are querying on null or empty todo id!"))
+                        HttpStatusCode.BadRequest,
+                        "Missing Fields!",
+                        listOf(ApiError.Error(ErrorCode.MISSING_TODO, "You are querying on null or empty todo id!"))
                 )
                 return@put call.respond(HttpStatusCode.BadRequest, message)
             }
@@ -51,9 +47,9 @@ fun Route.putTodoUpdate(
             val todo = todoRepository.findTodo(todoId.toInt())
             if (todo == null) {
                 val message = ApiError(
-                    HttpStatusCode.BadRequest,
-                    "Cannot find TODO!",
-                    listOf(ApiError.Error(ErrorCode.TODO_NOT_EXIST, "Cannot find TODO with id is $todoId!"))
+                        HttpStatusCode.BadRequest,
+                        "Cannot find TODO!",
+                        listOf(ApiError.Error(ErrorCode.TODO_NOT_EXIST, "Cannot find TODO with id is $todoId!"))
                 )
                 return@put call.respond(HttpStatusCode.BadRequest, message)
             }

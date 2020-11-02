@@ -29,6 +29,7 @@ repositories {
 }
 
 dependencies {
+
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
@@ -37,6 +38,7 @@ dependencies {
     implementation("io.ktor:ktor-server-sessions:$ktor_version")
     implementation("io.ktor:ktor-auth-jwt:$ktor_version")
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
+    implementation("io.ktor:ktor-html-builder:$ktor_version")
 
     // setup postgres sql
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
@@ -50,6 +52,7 @@ dependencies {
 
     // Json
     implementation("io.ktor:ktor-jackson:$jackson_version")
+
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src")
